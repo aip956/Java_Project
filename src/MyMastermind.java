@@ -30,6 +30,14 @@ public class MyMastermind {
             System.err.println("Database connection failed: " + e.getMessage());
             return;
         }
+        // Flag check
+        Boolean debugMode = false;
+        for (String arg : args) {
+            if ("-d".equals(arg)) {
+                debugMode = true;
+            }
+        }
+        System.out.println("debugger: " + debugMode);
         Guesser guesser = new Guesser();
         SecretKeeper secretKeeper = new SecretKeeper();
         GameData gameData = new GameData();
