@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class SecretKeeper extends Player {
     public String secretCode;
@@ -27,7 +28,18 @@ public class SecretKeeper extends Player {
     }
 
     private String generateRandomSecret() {
-        String localSecret = "0000"; // if API fails
+        String apiSecret = fetchSecretFromAPI();
+        if (apiSecret != null && apiSecret.matches(VALID_GUESS_PATTERN)) {
+            System.out.println("Secret from API: " + apiSecret);
+            return apiSecret;
+        } else {
+            String localSecret = generateLocalSecret();
+            System.out.println("Local Secret: " + localSecret);
+            return localSecret;
+        }
+    }
+
+    private String fetchSecretFromAPI() {
         try {
             URL url = new URL("https://www.random.org/integers/?num=4&min=0&max=7&col=1&base=10&format=plain&rnd=new");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -40,14 +52,22 @@ public class SecretKeeper extends Player {
                 response.append(line);
             }
             reader.close();
-    
-            secretCode = response.toString().trim();
-            System.out.println("Secret from API: " + secretCode);
-            return secretCode; // Return secret code generated
+
+            return response.toString().trim().replace("\n", ""); // remove new lines
         } catch (IOException e) {
-            System.out.println("Failed to get API secret; using local secret" + localSecret);
-            return localSecret;
+            System.out.println("Failed to get API secret: " + e.getMessage());
+            return null; // Return null to indicate failure
         }
+    }
+
+    // Generate backup secret locally
+    private String generateLocalSecret() {
+        Random random = new Random();
+        StringBuilder localSecret = new StringBuilder(4);
+        for (int i = 0; i < 4; i++) {
+            localSecret.append(random.nextInt(7)); // Generate digits 0-7
+        }
+        return localSecret.toString();
     }
 
     public String getSecretCode() {
