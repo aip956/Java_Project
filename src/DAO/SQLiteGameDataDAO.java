@@ -3,7 +3,7 @@ Data Access Object; Handles all database interactions related to GameData,
     abstracting away the specifics of data persistence.
 */
 package DAO;
-import Models.GameData;
+import Models.Game;
 import DBConnectionManager.DatabaseConnectionManager;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -26,8 +26,8 @@ public class SQLiteGameDataDAO implements GameDataDAO {
     }
 
     @Override
-    public void saveGameData(GameData gameData) throws SQLException {
-        String guessesString = String.join(",", gameData.getGuesses()); // Log this to check correctness
+    public void saveGameData(Game game) throws SQLException {
+        String guessesString = String.join(",", game.getGuesses()); // Log this to check correctness
 
         String sql = "INSERT INTO game_data (" +
             "player_name, " +
@@ -40,11 +40,11 @@ public class SQLiteGameDataDAO implements GameDataDAO {
 
         try (Connection conn = DatabaseConnectionManager.getConnection("SQLite", dbPath);
             PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, gameData.getPlayerName());
-                statement.setInt(2, gameData.getRoundsToSolve());
-                statement.setBoolean(3, gameData.isSolved());
-                statement.setString(4, gameData.getFormattedDate());
-                statement.setString(5, gameData.getSecretCode());
+                statement.setString(1, game.getPlayerName());
+                statement.setInt(2, game.getRoundsToSolve());
+                statement.setBoolean(3, game.isSolved());
+                statement.setString(4, game.getFormattedDate());
+                statement.setString(5, game.getSecretCode());
                 statement.setString(6, guessesString);
                 statement.executeUpdate(); // Execute SQL query
         } catch (SQLException e) {
