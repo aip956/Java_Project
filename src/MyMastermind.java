@@ -2,7 +2,7 @@
 
 import Models.Guesser;
 import Models.SecretKeeper;
-import Models.GameData;
+// import Models.GameData;
 import Models.Game;
 import View.GameUI;
 import DAO.GameDataDAO;
@@ -40,8 +40,8 @@ public class MyMastermind {
         System.out.println("debugger: " + debugMode);
         Guesser guesser = new Guesser();
         SecretKeeper secretKeeper = new SecretKeeper();
-        GameData gameData = new GameData();
-        Game game = new Game(guesser, secretKeeper, gameData, gameDataDAO);
+        // GameData gameData = new GameData();
+        Game game = new Game(guesser, secretKeeper, gameDataDAO);
         // Start game
         game.startGame();
     }

@@ -27,7 +27,7 @@ public class Game {
     private List<String> guesses;// move
 
     // class constructor
-    public Game (Guesser guesser, SecretKeeper secretKeeper, GameData gameData, GameDataDAO gameDataDAO) {
+    public Game (Guesser guesser, SecretKeeper secretKeeper, GameDataDAO gameDataDAO) {
         this.guesser = guesser;
         this.secretKeeper = secretKeeper;
         // this.gameData = gameData; 
@@ -121,26 +121,24 @@ public class Game {
 
             
             if (secretKeeper.isValidGuess(guess)) {
+                guesses.add(guess); // Added
                 secretKeeper.evaluateGuess(guess);
                 String feedback = secretKeeper.provideFeedback(guess);
                 gameUI.displayMessage(feedback);
 
                 if (guess.equals(secretKeeper.getSecretCode())) {
                     gameUI.displayMessage("Congrats! You did it!");
-                    // gameData.setSolved(true);
                     solved = true;
                     break;
                 }
             } else {
                 gameUI.displayMessage("Wrong Input!");
             }
-            guesses.add(guess); // Added
         } 
 
         // Womp womp womp . . . you lose
         if (!solved) {
             gameUI.displayMessage("Sorry, too many tries. The code was: " + secretKeeper.getSecretCode());
-            // gameData.setSolved(false);
         }
         finalizeGameData();
     }
@@ -150,13 +148,6 @@ public class Game {
         this.roundsToSolve = MAX_ATTEMPTS - secretKeeper.getAttemptsLeft();
         this.formattedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         this.secretCode = secretKeeper.getSecretCode();
-        // gameData.setPlayerName(guesser.getPlayerName());
-        // gameData.setGuesses(guesser.getGuesses());
-        // gameData.setRoundsToSolve(MAX_ATTEMPTS - secretKeeper.getAttemptsLeft());
-        // SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        // String formattedDate = formatter.format(new Date());
-        // gameData.setFormattedDate(formattedDate);
-        // gameData.setSecretCode(secretKeeper.getSecretCode());
         saveGameDataToDatabase();
         gameUI.close();        
     }
