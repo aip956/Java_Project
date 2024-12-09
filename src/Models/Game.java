@@ -1,44 +1,59 @@
 // Game.java
 package Models;
-import java.text.SimpleDateFormat;
+
+import Utils.ValidationUtils;
+import View.GameUI;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ArrayList;
+import java.util.List; 
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.sql.SQLException;
 import DAO.GameDataDAO;
-import View.GameUI;
+
+
 
 public class Game {
     // Fields
-    private Guesser guesser;
     private SecretKeeper secretKeeper;
-    // private GameData gameData;
-    private GameDataDAO gameDataDAO;
     private GameUI gameUI;
-    private int attemptsLeft;
+    private List<String> guesses;
+    public int attemptsLeft;
+    private boolean solved;
+
+    private GameDataDAO gameDataDAO;
+    private Guesser guesser;
+
     public static final int MAX_ATTEMPTS = 5;
 
     private int gameID; // move
     private String playerName;// move
     private int roundsToSolve;// move
-    private boolean solved;// move
     private String formattedDate;// move
     private String secretCode;// move
-    private List<String> guesses;// move
 
     // class constructor
     public Game (Guesser guesser, SecretKeeper secretKeeper, GameDataDAO gameDataDAO) {
-        this.guesser = guesser;
         this.secretKeeper = secretKeeper;
-        // this.gameData = gameData; 
-        this.gameDataDAO = gameDataDAO;      
         this.gameUI = new GameUI();
-        this.attemptsLeft = MAX_ATTEMPTS;
         this.guesses = new ArrayList<>();
+        this.attemptsLeft = MAX_ATTEMPTS;
+        this.gameDataDAO = gameDataDAO;      
+        this.solved = false;
+        this.guesser = guesser;
+
+        // Get the secret code from SK
+        this.secretCode = secretKeeper.getSecretCode();
     }
 
 
     // Getters, setters; moved
+    public int getAttemptsLeft() {
+        return attemptsLeft;
+    }
+
     public int getGameID() {
         return gameID;
     }
@@ -83,14 +98,14 @@ public class Game {
         this.formattedDate = formattedDate;
     }
 
-    public String getSecretCode() {
-        return secretCode;
-    }
+    // public String getSecretCode() {
+    //     return secretCode;
+    // }
 
-    public void setSecretCode(String secretCode) {
-        this.secretCode = secretCode;
-        // logger.debug("93secretCode: {}", secretCode);
-    }
+    // public void setSecretCode(String secretCode) {
+    //     this.secretCode = secretCode;
+    //     // logger.debug("93secretCode: {}", secretCode);
+    // }
 
     public List<String> getGuesses() {
         return guesses;
@@ -101,32 +116,85 @@ public class Game {
         // logger.debug("102guesses: {}", guesses);
     }
 
-    // Methods
     public static int getMaxAttempts() {
         return MAX_ATTEMPTS;
+    }
+
+    public boolean hasAttemptsLeft() {
+        return attemptsLeft > 0;
+    }
+
+    // Method to check if guess is four nums 0 - 8
+    public boolean isValidGuess(String guess) {
+        // 4 digits 0 - 7
+        return guess != null && guess.matches(ValidationUtils.VALID_GUESS_PATTERN);
+    }
+
+    public void evaluateGuess(String guess) {
+        if (!isValidGuess(guess)) {
+            throw new IllegalArgumentException("Invalid guess");
+        }
+        guesses.add(guess); // Add guess to list of guesses
+        attemptsLeft--;
+    }
+
+
+
+    public String provideFeedback(String guess) {
+
+        if (!isValidGuess(guess)) {
+            return "Invalid guess; enter 4 digits, 0 - 7.";
+        }
+        
+        int wellPlaced = 0;
+        int misPlaced = 0;
+        Map<Character, Integer> secretCount = new HashMap<>();
+        Map<Character, Integer> guessCount = new HashMap<>();
+
+        // Count well placed; populate hash
+        for (int i = 0; i < 4; i++) {
+            char secretChar = secretCode.charAt(i);
+            char guessChar = guess.charAt(i);
+
+            if (secretChar == guessChar) {
+                wellPlaced++;
+            }
+            else {
+                secretCount.put(secretChar, secretCount.getOrDefault(secretChar, 0) + 1);
+                guessCount.put(guessChar, guessCount.getOrDefault(guessChar, 0) + 1);
+            }
+        }
+
+        // Count mis-placed
+        for (char c : guessCount.keySet()) {
+            if (secretCount.containsKey(c)) {
+                misPlaced += Math.min(secretCount.get(c), guessCount.get(c));
+            }
+        }
+        return String.format("Well placed pieces: %d\nMisplaced pieces: %d", wellPlaced, misPlaced);
     }
 
     public void startGame() {
         // Use gameUI for UI interactions
         gameUI.displayMessage("Will you find the secret code?\nGood luck!");
 
-        while (secretKeeper.hasAttemptsLeft()) {
+        while (hasAttemptsLeft()) {
             gameUI.displayMessage("---"); 
-            gameUI.displayMessage("Round " + (MAX_ATTEMPTS - secretKeeper.getAttemptsLeft()));  
-            gameUI.displayMessage("Rounds left: " + secretKeeper.getAttemptsLeft());     
+            gameUI.displayMessage("Round " + (MAX_ATTEMPTS - attemptsLeft + 1));  
+            gameUI.displayMessage("Rounds left: " + secretKeeper.attemptsLeft);     
             
             // String guess = gameUI.getInput("Enter guess: ");
             String guess = guesser.makeGuess();
             gameUI.displayMessage("YourGuess: " + guess);
 
             
-            if (secretKeeper.isValidGuess(guess)) {
-                guesses.add(guess); // Added
-                secretKeeper.evaluateGuess(guess);
-                String feedback = secretKeeper.provideFeedback(guess);
+            if (isValidGuess(guess)) {
+                // guesses.add(guess); // Added
+                evaluateGuess(guess);
+                String feedback = provideFeedback(guess);
                 gameUI.displayMessage(feedback);
 
-                if (guess.equals(secretKeeper.getSecretCode())) {
+                if (guess.equals(secretCode)) {
                     gameUI.displayMessage("Congrats! You did it!");
                     solved = true;
                     break;
@@ -138,14 +206,14 @@ public class Game {
 
         // Womp womp womp . . . you lose
         if (!solved) {
-            gameUI.displayMessage("Sorry, too many tries. The code was: " + secretKeeper.getSecretCode());
+            gameUI.displayMessage("Sorry, too many tries. The code was: " + secretCode);
         }
         finalizeGameData();
     }
 
     private void finalizeGameData() {
         this.playerName = guesser.getPlayerName();
-        this.roundsToSolve = MAX_ATTEMPTS - secretKeeper.getAttemptsLeft();
+        this.roundsToSolve = MAX_ATTEMPTS - attemptsLeft;
         this.formattedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         this.secretCode = secretKeeper.getSecretCode();
         saveGameDataToDatabase();
@@ -161,3 +229,5 @@ public class Game {
         }
     }
 }
+
+
