@@ -3,7 +3,6 @@ package Models;
 
 public abstract class Player {
     protected String playerName;
-    // protected String guessedCode;
 
     public Player(String name) {
         this.playerName = name;
@@ -12,4 +11,7 @@ public abstract class Player {
     public String getPlayerName() {
         return playerName;
     }
+
+    // Abstract method for making guesses (implemented by subclasses)
+    public abstract String makeGuess();
 }

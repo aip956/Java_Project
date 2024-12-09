@@ -2,7 +2,6 @@
 
 import Models.Guesser;
 import Models.SecretKeeper;
-// import Models.GameData;
 import Models.Game;
 import View.GameUI;
 import DAO.GameDataDAO;
@@ -30,6 +29,17 @@ public class MyMastermind {
             System.err.println("Database connection failed: " + e.getMessage());
             return;
         }
+        // Scanner scanner = new Scanner(System.in);
+        // System.out.print("Enter number of players: ");
+        // int numPlayers = Integer.parseInt(scanner.nextLine());
+
+        // List<Guesser> players = new ArrayList<>();
+        // for (int i = 0; i < numPlayers; i++);
+        // System.out.print("Enter name for Player " + i ": ");
+        // String playerName = scanner.nextLine();
+        // players.add(new Guesser(playerName));
+
+
         // Flag check
         Boolean debugMode = false;
         for (String arg : args) {
@@ -37,11 +47,13 @@ public class MyMastermind {
                 debugMode = true;
             }
         }
+        
         System.out.println("debugger: " + debugMode);
-        Guesser guesser = new Guesser();
+        Guesser guesser = new Guesser("Player1");
         SecretKeeper secretKeeper = new SecretKeeper();
         // GameData gameData = new GameData();
-        Game game = new Game(guesser, secretKeeper, gameDataDAO);
+         String secretCode = secretKeeper.getSecretCode();
+        Game game = new Game(guesser, secretCode, gameDataDAO);
         // Start game
         game.startGame();
     }

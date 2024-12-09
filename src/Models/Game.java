@@ -7,53 +7,49 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.List; 
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.sql.SQLException;
 import DAO.GameDataDAO;
 
 
-
 public class Game {
     // Fields
-    private SecretKeeper secretKeeper;
+    // private List<Guesser> players; // List of players if multiplayer
+    // private int currentPlayerIndex; // Track the player
+    // comment out the Guesser guesser
+    private Guesser guesser;
     private GameUI gameUI;
+    private String secretCode;
     private List<String> guesses;
     public int attemptsLeft;
     private boolean solved;
-
     private GameDataDAO gameDataDAO;
-    private Guesser guesser;
+    
 
     public static final int MAX_ATTEMPTS = 5;
 
-    private int gameID; // move
-    private String playerName;// move
-    private int roundsToSolve;// move
-    private String formattedDate;// move
-    private String secretCode;// move
+    private int gameID; 
+    private String playerName;
+    private int roundsToSolve;
+    private String formattedDate;
 
-    // class constructor
-    public Game (Guesser guesser, SecretKeeper secretKeeper, GameDataDAO gameDataDAO) {
-        this.secretKeeper = secretKeeper;
+
+    // class constructor; use List<Guesser> players for guesser
+    public Game (Guesser guesser, String secretCode, GameDataDAO gameDataDAO) {
+        // this.players = players;
+        // this.currentPlayerIndex = 0; // Start with the first player
+        this.guesser = guesser;
+        this.secretCode = secretCode;
         this.gameUI = new GameUI();
         this.guesses = new ArrayList<>();
         this.attemptsLeft = MAX_ATTEMPTS;
         this.gameDataDAO = gameDataDAO;      
         this.solved = false;
-        this.guesser = guesser;
-
-        // Get the secret code from SK
-        this.secretCode = secretKeeper.getSecretCode();
     }
 
 
     // Getters, setters; moved
-    public int getAttemptsLeft() {
-        return attemptsLeft;
-    }
-
     public int getGameID() {
         return gameID;
     }
@@ -65,7 +61,6 @@ public class Game {
     public String getPlayerName() {
         return playerName;
     }
-
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
         // logger.debug("57playerName: {}", playerName);
@@ -75,7 +70,6 @@ public class Game {
     public int getRoundsToSolve() {
         return roundsToSolve;
     }
-
     public void setRoundsToSolve(int roundsToSolve) {
         this.roundsToSolve = roundsToSolve;
         // logger.debug("66roundsToSolve: {}", roundsToSolve);
@@ -84,7 +78,6 @@ public class Game {
     public boolean isSolved() {
         return solved;
     }
-
     public void setSolved(boolean solved) {
         this.solved = solved;
         // logger.debug("75solved: {}", solved);
@@ -93,24 +86,19 @@ public class Game {
     public String getFormattedDate() {
         return formattedDate;
     }
-
     public void setFormattedDate (String formattedDate) {
         this.formattedDate = formattedDate;
     }
 
+    // Do I need this getter?
     public String getSecretCode() {
         return secretCode;
     }
 
-    // public void setSecretCode(String secretCode) {
-    //     this.secretCode = secretCode;
-    //     // logger.debug("93secretCode: {}", secretCode);
-    // }
 
     public List<String> getGuesses() {
         return guesses;
     }
-
     public void setGuesses(List<String> guesses) {
         this.guesses = guesses;
         // logger.debug("102guesses: {}", guesses);
@@ -119,7 +107,9 @@ public class Game {
     public static int getMaxAttempts() {
         return MAX_ATTEMPTS;
     }
-
+    public int getAttemptsLeft() {
+        return attemptsLeft;
+    }
     public boolean hasAttemptsLeft() {
         return attemptsLeft > 0;
     }
@@ -179,17 +169,15 @@ public class Game {
         gameUI.displayMessage("Will you find the secret code?\nGood luck!");
 
         while (hasAttemptsLeft()) {
+            // Guesser currentPlayer = players.get(currentPlayerIndex);
             gameUI.displayMessage("---"); 
             gameUI.displayMessage("Round " + (MAX_ATTEMPTS - attemptsLeft + 1));  
             gameUI.displayMessage("Rounds left: " + attemptsLeft);     
             
-            // String guess = gameUI.getInput("Enter guess: ");
             String guess = guesser.makeGuess();
             gameUI.displayMessage("YourGuess: " + guess);
-
             
             if (isValidGuess(guess)) {
-                // guesses.add(guess); // Added
                 evaluateGuess(guess);
                 String feedback = provideFeedback(guess);
                 gameUI.displayMessage(feedback);
@@ -202,6 +190,8 @@ public class Game {
             } else {
                 gameUI.displayMessage("Wrong Input!");
             }
+            // Switch to other player
+            // currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
         } 
 
         // Womp womp womp . . . you lose
@@ -215,7 +205,6 @@ public class Game {
         this.playerName = guesser.getPlayerName();
         this.roundsToSolve = MAX_ATTEMPTS - attemptsLeft;
         this.formattedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        this.secretCode = secretKeeper.getSecretCode();
         saveGameDataToDatabase();
         gameUI.close();        
     }

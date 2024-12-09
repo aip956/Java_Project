@@ -6,25 +6,19 @@ import java.util.List;
 
 public class Guesser extends Player {
     private Scanner scanner;
-    private List<String> guesses;
 
-    public Guesser() {
-        super("");// initialize with empty name
+    public Guesser(String name) {
+        super("");// Call the Player constructor
         this.scanner = new Scanner(System.in);
-        this.guesses = new ArrayList<>();
+        // this.guesses = new ArrayList<>();
         System.out.print("Please enter your name: ");
         this.playerName = scanner.nextLine();
     }
 
+    @Override
     public String makeGuess() {
         System.out.print("Enter guess: ");
-        String guess = scanner.nextLine();
-        guesses.add(guess);
-        return guess;
-    }
-
-    public List<String> getGuesses() {
-        return new ArrayList<>(guesses); // return a copy for encapsulation
+        return scanner.nextLine();
     }
 }
 
