@@ -63,7 +63,5 @@ public class SecretKeeper {
     public String getSecretCode() {
         return secretCode;
     } 
-
-    
 }
 

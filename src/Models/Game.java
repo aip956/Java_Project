@@ -98,9 +98,9 @@ public class Game {
         this.formattedDate = formattedDate;
     }
 
-    // public String getSecretCode() {
-    //     return secretCode;
-    // }
+    public String getSecretCode() {
+        return secretCode;
+    }
 
     // public void setSecretCode(String secretCode) {
     //     this.secretCode = secretCode;
@@ -181,7 +181,7 @@ public class Game {
         while (hasAttemptsLeft()) {
             gameUI.displayMessage("---"); 
             gameUI.displayMessage("Round " + (MAX_ATTEMPTS - attemptsLeft + 1));  
-            gameUI.displayMessage("Rounds left: " + secretKeeper.attemptsLeft);     
+            gameUI.displayMessage("Rounds left: " + attemptsLeft);     
             
             // String guess = gameUI.getInput("Enter guess: ");
             String guess = guesser.makeGuess();
