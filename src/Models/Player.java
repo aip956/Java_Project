@@ -1,4 +1,4 @@
-// Player.java
+// Models.Player.java
 package Models;
 
 public abstract class Player {

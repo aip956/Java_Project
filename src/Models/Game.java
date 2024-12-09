@@ -1,4 +1,4 @@
-// Game.java
+// Models.Game.java
 package Models;
 
 import Utils.ValidationUtils;

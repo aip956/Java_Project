@@ -1,4 +1,4 @@
-// Guesser.java
+// Models.Guesser.java
 package Models;
 import java.util.Scanner;
 import java.util.ArrayList;
