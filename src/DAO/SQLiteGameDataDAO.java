@@ -72,14 +72,13 @@ public class SQLiteGameDataDAO implements GameDataDAO {
                 Game game = new Game(
                     rs.getString("player_name"),
                     rs.getString("secret_code"),
-                    this
+                    rs.getInt("rounds_to_solve"),
+                    rs.getBoolean("solved"),
+                    rs.getString("timeStamp")
                 );
-                game.setRoundsToSolve(rs.getInt("rounds_to_solve"));
-                game.setSolved(rs.getBoolean("solved"));
-                game.setFormattedDate(rs.getString("timestamp"));
                 leaderboard.add(game);
-                }
-                return leaderboard;
+            }
+            return leaderboard;
             }
         }
     }
