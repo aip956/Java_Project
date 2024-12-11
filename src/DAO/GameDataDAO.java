@@ -12,5 +12,13 @@ public interface GameDataDAO {
         Placehold for getGamesBySolved
         or any other retrieval of games from the database
     */
+    // Retrieve the top games (leaderboard)
+    List<Game> getTopGames(int limit) throws SQLException;
+
+    // Retrieve games from a specific player
+    List<Game> getGamesByPlayer(String playerName) throws SQLException;
+
+    // Optional: Delete all game data (for cleanup)
+    void deleteAllGames() throws SQLException;
 }
 
