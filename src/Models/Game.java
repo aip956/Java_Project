@@ -47,7 +47,15 @@ public class Game {
         this.gameDataDAO = gameDataDAO;      
         this.solved = false;
     }
-
+    
+    // Constructor for leaderboard 
+    public Game(String playerName, String secretCode, int roundsToSolve, boolean solved, String formattedDate) {
+        this.playerName = playerName;
+        this.secretCode = secretCode;
+        this.roundsToSolve = roundsToSolve;
+        this.solved = solved;
+        this.formattedDate = formattedDate;
+    }
 
     // Getters, setters; moved
     public int getGameID() {
