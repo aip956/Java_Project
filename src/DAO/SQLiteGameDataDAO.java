@@ -92,7 +92,14 @@ public class SQLiteGameDataDAO implements GameDataDAO {
 
         try (Connection conn = DriverManager.getConnection("jdbc:sql:" + dbPath);
             PreparedStatement statement = conn.prepareStatement)) {
-                
+                statement.setString(1, playerName);
+
+                try (ResultSet rs = statement.executeQuery()) {
+                    List<Game> games = new ArrayList<>();
+                    while (rs.next()) {
+                        
+                    }
+                }
             }
     }
 
