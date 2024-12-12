@@ -97,10 +97,17 @@ public class SQLiteGameDataDAO implements GameDataDAO {
                 try (ResultSet rs = statement.executeQuery()) {
                     List<Game> games = new ArrayList<>();
                     while (rs.next()) {
-                        
-                    }
+                        Game game = new Game(
+                            rs.getString("player_name"),
+                            rs.getString("secret_code"),
+                            rs.getInt("rounds_to_solve"),
+                            rs.getBoolean("solved"),
+                            rs.getString("timeStamp")
+                        );
+                    return games;
                 }
             }
+        }
     }
 
 }
