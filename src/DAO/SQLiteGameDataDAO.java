@@ -82,4 +82,18 @@ public class SQLiteGameDataDAO implements GameDataDAO {
             }
         }
     }
+
+    // Retrieve all games for a player
+    @Override
+    public List<Game> getGamesByPlayer(String playerName) throws SQLException {
+        String sql = "SELECT player_name, rounds_to_solve, solved, timestamp, secret_code" +
+            "FROM game_data " +
+            "WHERE player_name = ?";
+
+        try (Connection conn = DriverManager.getConnection("jdbc:sql:" + dbPath);
+            PreparedStatement statement = conn.prepareStatement)) {
+                
+            }
+    }
+
 }
