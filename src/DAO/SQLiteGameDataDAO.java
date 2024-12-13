@@ -111,13 +111,13 @@ public class SQLiteGameDataDAO implements GameDataDAO {
     }
 
     // Delete all game data
-    @Override
-    public void deleteAllGames() throws SQLException {
-        String sql = "DELETE FROM game_data";
+    // @Override
+    // public void deleteAllGames() throws SQLException {
+    //     String sql = "DELETE FROM game_data";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
-            PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.executeUpdate();
-        }
-    }
+    //     try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
+    //         PreparedStatement statement = conn.prepareStatement(sql)) {
+    //             statement.executeUpdate();
+    //     }
+    // }
 }
