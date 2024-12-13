@@ -84,31 +84,31 @@ public class SQLiteGameDataDAO implements GameDataDAO {
     }
 
     // Retrieve all games for a player
-    @Override
-    public List<Game> getGamesByPlayer(String playerName) throws SQLException {
-        String sql = "SELECT player_name, rounds_to_solve, solved, timestamp, secret_code" +
-            "FROM game_data " +
-            "WHERE player_name = ?";
+    // @Override
+    // public List<Game> getGamesByPlayer(String playerName) throws SQLException {
+    //     String sql = "SELECT player_name, rounds_to_solve, solved, timestamp, secret_code" +
+    //         "FROM game_data " +
+    //         "WHERE player_name = ?";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:sql:" + dbPath);
-            PreparedStatement statement = conn.prepareStatement)) {
-                statement.setString(1, playerName);
+    //     try (Connection conn = DriverManager.getConnection("jdbc:sql:" + dbPath);
+    //         PreparedStatement statement = conn.prepareStatement)) {
+    //             statement.setString(1, playerName);
 
-                try (ResultSet rs = statement.executeQuery()) {
-                    List<Game> games = new ArrayList<>();
-                    while (rs.next()) {
-                        Game game = new Game(
-                            rs.getString("player_name"),
-                            rs.getString("secret_code"),
-                            rs.getInt("rounds_to_solve"),
-                            rs.getBoolean("solved"),
-                            rs.getString("timeStamp")
-                        );
-                    return games;
-                }
-            }
-        }
-    }
+    //             try (ResultSet rs = statement.executeQuery()) {
+    //                 List<Game> games = new ArrayList<>();
+    //                 while (rs.next()) {
+    //                     Game game = new Game(
+    //                         rs.getString("player_name"),
+    //                         rs.getString("secret_code"),
+    //                         rs.getInt("rounds_to_solve"),
+    //                         rs.getBoolean("solved"),
+    //                         rs.getString("timeStamp")
+    //                     );
+    //                 return games;
+    //             }
+    //         }
+    //     }
+    // }
 
     // Delete all game data
     // @Override
